@@ -11,35 +11,46 @@ class PasswordGenerator:
         self.symbole = symbole
         self.validation = validation
 
-    def generateurMotDePasse(self):
-        minuscule = []
-        majuscule = []
-        symbole = []
-        chiffre = []
+    def generateur_mot_de_passe(self):
         liste_tous_caracteres = []
-        nombre_longueur_mot_de_passe = self.longueurPassword
-        if self.minuscule:
-            for i in range(nombre_longueur_mot_de_passe):
-                minuscule.append(random.choice(string.ascii_lowercase))
+        mot_de_passe = []
 
+        if self.minuscule:
+            liste_tous_caracteres += list(string.ascii_lowercase)
+            mot_de_passe.append(random.choice(string.ascii_lowercase))
 
         if self.majuscule:
-            for i in range(nombre_longueur_mot_de_passe):
-                majuscule.append(random.choice(string.ascii_uppercase))
-
-        if self.symbole:
-            for i in range(nombre_longueur_mot_de_passe):
-                symbole.append(random.choice(string.punctuation))
+            liste_tous_caracteres += list(string.ascii_uppercase)
+            mot_de_passe.append(random.choice(string.ascii_uppercase))
 
         if self.chiffre:
-            for i in range(nombre_longueur_mot_de_passe):
-                chiffre.append(random.choice(string.digits))
+            liste_tous_caracteres += list(string.digits)
+            mot_de_passe.append(random.choice(string.digits))
 
+        if self.symbole:
+            liste_tous_caracteres += list(string.punctuation)
+            mot_de_passe.append(random.choice(string.punctuation))
 
-        liste_tous_caracteres = minuscule + majuscule + chiffre + symbole
-        liste_mot_de_passe = random.choices(liste_tous_caracteres, k=self.longueurPassword)
+        # Compléter le reste du mot de passe aléatoirement
+        taille_restante = self.longueurPassword - len(mot_de_passe)
+        mot_de_passe += random.choices(liste_tous_caracteres, k=max(0, taille_restante))
 
-        random.shuffle(liste_mot_de_passe)
-        resultat = "".join(liste_mot_de_passe)
+        random.shuffle(mot_de_passe)
+        resultat = "".join(mot_de_passe[:self.longueurPassword])
+
+        if self.validation:
+            self.validation_mot_de_passe(resultat)
 
         return resultat
+
+    def validation_mot_de_passe(self, mot_de_passe):
+        symboles = string.punctuation
+        v_minuscule = any(c.islower() for c in mot_de_passe)
+        v_majuscule = any(c.isupper() for c in mot_de_passe)
+        v_chiffre = any(c.isdigit() for c in mot_de_passe)
+        v_symbole = any(c in symboles for c in mot_de_passe)
+
+        if v_minuscule and v_majuscule and v_chiffre and v_symbole:
+            print("Vous avez un caractère de chaque catégorie")
+        else:
+            print("Vous n'avez pas un caractère de chaque catégorie")
