@@ -16,22 +16,25 @@ class PasswordGenerator:
         majuscule = []
         symbole = []
         chiffre = []
+        liste_tous_caracteres = []
+        nombre_longueur_mot_de_passe = self.longueurPassword
+        if self.minuscule:
+            for i in range(nombre_longueur_mot_de_passe):
+                minuscule.append(random.choice(string.ascii_lowercase))
 
-        nombre_random_minuscule = random.randint(1, 3)
-        for i in range(nombre_random_minuscule):
-            minuscule.append(random.choice(string.ascii_lowercase))
 
-        nombre_random_majuscule = random.randint(1, 3)
-        for i in range(nombre_random_majuscule):
-            majuscule.append(random.choice(string.ascii_uppercase))
+        if self.majuscule:
+            for i in range(nombre_longueur_mot_de_passe):
+                majuscule.append(random.choice(string.ascii_uppercase))
 
-        nombre_random_symbole = random.randint(1, 3)
-        for i in range(nombre_random_symbole):
-            symbole.append(random.choice(string.punctuation))
+        if self.symbole:
+            for i in range(nombre_longueur_mot_de_passe):
+                symbole.append(random.choice(string.punctuation))
 
-        nombre_random_chiffre = random.randint(1, 3)
-        for i in range(nombre_random_chiffre):
-            chiffre.append(random.choice(string.digits))
+        if self.chiffre:
+            for i in range(nombre_longueur_mot_de_passe):
+                chiffre.append(random.choice(string.digits))
+
 
         liste_tous_caracteres = minuscule + majuscule + chiffre + symbole
         liste_mot_de_passe = random.choices(liste_tous_caracteres, k=self.longueurPassword)
