@@ -1,3 +1,4 @@
+#Brandon-lee Ouellet Daraiche | 6336739 | nibra37
 from app.core.generator import PasswordGenerator
 import argparse
 
