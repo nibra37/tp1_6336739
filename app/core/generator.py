@@ -31,7 +31,6 @@ class PasswordGenerator:
             liste_tous_caracteres += list(string.punctuation)
             mot_de_passe.append(random.choice(string.punctuation))
 
-        # Compléter le reste du mot de passe aléatoirement
         taille_restante = self.longueurPassword - len(mot_de_passe)
         mot_de_passe += random.choices(liste_tous_caracteres, k=max(0, taille_restante))
 
