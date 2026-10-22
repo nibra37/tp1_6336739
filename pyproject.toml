@@ -2,4 +2,6 @@
 name = "tp-6336739"
 version = "0.1.0"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "pyside6>=6.12.0",
+]
