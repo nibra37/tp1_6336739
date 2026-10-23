@@ -1,3 +1,4 @@
+#Brandon-Lee Ouellet Daraiche 6336739 nibra37
 import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QHBoxLayout,
@@ -11,67 +12,88 @@ class MainWindow(QWidget):
         super().__init__()
         self.setWindowTitle("generateur mot de passe")
         self.resize(800, 200)
+        self.mot_de_passe = "ABC123"
+        self.visible = False
         self.init_ui()
 
     def init_ui(self):
 
-                    layoutV = QVBoxLayout()
-                    rangee1 = QHBoxLayout()
-                    rangee2 = QHBoxLayout()
-                    self.label_mdp = QLabel("*************")
-                    self.label_mdp.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        layoutV = QVBoxLayout()
+        rangee1 = QHBoxLayout()
+        rangee2 = QHBoxLayout()
+        self.label_mdp = QLabel("*************")
+        self.label_mdp.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
 
-                    self.bouton_copier = QPushButton("Copier")
+        self.bouton_copier = QPushButton("Copier")
 
-                    self.bouton_afficher = QPushButton("afficher")
-                    self.bouton_afficher.setCheckable(True)
-                    rangee1.addWidget(self.label_mdp)
-                    rangee1.addWidget(self.bouton_copier)
-                    rangee1.addWidget(self.bouton_afficher)
-                    layoutV.addLayout(rangee1)
+        self.bouton_afficher = QPushButton("afficher")
+        self.bouton_afficher.toggled.connect(self.afficher_mot_de_passe)
+        self.spin_box = QSpinBox()
+        self.bouton_afficher.setCheckable(True)
+        rangee1.addWidget(self.label_mdp)
+        rangee1.addWidget(self.bouton_copier)
+        rangee1.addWidget(self.bouton_afficher)
+        layoutV.addLayout(rangee1)
 
-                    self.longueur = QLabel("longueur")
-                    self.slider = QSlider(Qt.Orientation.Horizontal)
-                    rangee2.addWidget(self.longueur)
+        self.longueur = QLabel("longueur")
+        rangee2.addWidget(self.longueur)
+
+        self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider.setRange(4, 20)
+        self.slider.setValue(16)
+        self.slider.valueChanged.connect(self.spin_box.setValue)
+        rangee2.addWidget(self.slider)
 
 
+        self.spin_box.setRange(4, 20)
+        self.spin_box.setValue(16)
+        self.spin_box.valueChanged.connect(self.slider.setValue)
+        rangee2.addWidget(self.spin_box)
+        layoutV.addLayout(rangee2)
 
-                    self.slider.setRange(4, 20)
-                    self.slider.setValue(16)
-                    rangee2.addWidget(self.slider)
+        self.checkbox_symbole = QCheckBox("Symbole")
+        self.checkbox_symbole.setChecked(True)
+        self.checkbox_symbole.stateChanged.connect(lambda: print("État:", self.checkbox_symbole.isChecked()))
+        layoutV.addWidget(self.checkbox_symbole)
+
+        self.checkbox_majuscule = QCheckBox("Majuscule")
+        self.checkbox_majuscule.setChecked(True)
+        self.checkbox_majuscule.stateChanged.connect(lambda: print("État:", self.checkbox_majuscule.isChecked()))
+        layoutV.addWidget(self.checkbox_majuscule)
+
+        self.checkbox_minuscule = QCheckBox("Minuscule")
+        self.checkbox_minuscule.setChecked(True)
+        self.checkbox_minuscule.stateChanged.connect(lambda: print("État:", self.checkbox_minuscule.isChecked()))
+        layoutV.addWidget(self.checkbox_minuscule)
+
+        self.checkbox_chiffre = QCheckBox("Chiffre")
+        self.checkbox_chiffre.setChecked(True)
+        self.checkbox_chiffre.stateChanged.connect(lambda: print("État:", self.checkbox_chiffre.isChecked()))
+        layoutV.addWidget(self.checkbox_chiffre)
+
+        self.button_generer_mot_de_passe = QPushButton("generer un mot de passe")
+        layoutV.addWidget(self.button_generer_mot_de_passe)
+        self.button_generer_mot_de_passe.clicked.connect(lambda: print("Bouton cliqué !"))
+        self.setLayout(layoutV)
+
+        self.rafraichir_la_page()
+
+    def afficher_mot_de_passe(self, visible : bool):
+        self.visible = visible
+        self.rafraichir_la_page()
 
 
+    def rafraichir_la_page(self):
+        if self.visible:
+            self.bouton_afficher.setText("masquer")
+            self.label_mdp.setText(self.mot_de_passe)
+        if not self.visible:
+            self.bouton_afficher.setText("afficher")
+            longueur = len(self.mot_de_passe)
+            mot_de_passe_cachee = ("*" * longueur)
+            self.label_mdp.setText(mot_de_passe_cachee)
 
-                    self.spin_box = QSpinBox()
-                    self.spin_box.setRange(4, 20)
-                    self.spin_box.setValue(16)
-                    rangee2.addWidget(self.spin_box)
-                    layoutV.addLayout(rangee2)
 
-                    self.checkbox_symbole = QCheckBox("Symbole")
-                    self.checkbox_symbole.setChecked(True)
-                    self.checkbox_symbole.stateChanged.connect(lambda: print("État:", self.checkbox_symbole.isChecked()))
-                    layoutV.addWidget(self.checkbox_symbole)
-
-                    self.checkbox_majuscule = QCheckBox("Majuscule")
-                    self.checkbox_majuscule.setChecked(True)
-                    self.checkbox_majuscule.stateChanged.connect(lambda: print("État:", self.checkbox_majuscule.isChecked()))
-                    layoutV.addWidget(self.checkbox_majuscule)
-
-                    self.checkbox_minuscule = QCheckBox("Minuscule")
-                    self.checkbox_minuscule.setChecked(True)
-                    self.checkbox_minuscule.stateChanged.connect(lambda: print("État:", self.checkbox_minuscule.isChecked()))
-                    layoutV.addWidget(self.checkbox_minuscule)
-
-                    self.checkbox_chiffre = QCheckBox("Chiffre")
-                    self.checkbox_chiffre.setChecked(True)
-                    self.checkbox_chiffre.stateChanged.connect(lambda: print("État:", self.checkbox_chiffre.isChecked()))
-                    layoutV.addWidget(self.checkbox_chiffre)
-
-                    self.button_generer_mot_de_passe = QPushButton("generer un mot de passe")
-                    layoutV.addWidget(self.button_generer_mot_de_passe)
-                    self.button_generer_mot_de_passe.clicked.connect(lambda: print("Bouton cliqué !"))
-                    self.setLayout(layoutV)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
