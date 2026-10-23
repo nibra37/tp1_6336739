@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QSlider, QSpinBox, QCheckBox, QVBoxLayout, QPushButton, QLabel
 )
 from PySide6.QtCore import Qt
+from app.core.generator import PasswordGenerator
 
 
 class MainWindow(QWidget):
@@ -13,7 +14,7 @@ class MainWindow(QWidget):
         self.setWindowTitle("generateur mot de passe")
         self.resize(800, 200)
         self.mot_de_passe = "ABC123"
-        self.visible = False
+        self.mdp_visible = False
         self.init_ui()
 
     def init_ui(self):
@@ -25,6 +26,7 @@ class MainWindow(QWidget):
         self.label_mdp.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
 
         self.bouton_copier = QPushButton("Copier")
+        self.bouton_copier.clicked.connect(self.copier)
 
         self.bouton_afficher = QPushButton("afficher")
         self.bouton_afficher.toggled.connect(self.afficher_mot_de_passe)
@@ -73,27 +75,40 @@ class MainWindow(QWidget):
 
         self.button_generer_mot_de_passe = QPushButton("generer un mot de passe")
         layoutV.addWidget(self.button_generer_mot_de_passe)
-        self.button_generer_mot_de_passe.clicked.connect(lambda: print("Bouton cliqué !"))
+        self.button_generer_mot_de_passe.clicked.connect(self.generer)
         self.setLayout(layoutV)
 
         self.rafraichir_la_page()
 
-    def afficher_mot_de_passe(self, visible : bool):
-        self.visible = visible
+    def afficher_mot_de_passe(self, mdp_visible : bool):
+        self.mdp_visible = mdp_visible
         self.rafraichir_la_page()
 
 
     def rafraichir_la_page(self):
-        if self.visible:
+        if self.mdp_visible:
             self.bouton_afficher.setText("masquer")
             self.label_mdp.setText(self.mot_de_passe)
-        if not self.visible:
+        if not self.mdp_visible:
             self.bouton_afficher.setText("afficher")
             longueur = len(self.mot_de_passe)
             mot_de_passe_cachee = ("*" * longueur)
             self.label_mdp.setText(mot_de_passe_cachee)
 
+    def copier(self):
+        texte_copier = QApplication.clipboard()
+        texte_copier.setText(self.mot_de_passe)
 
+    def generer(self):
+        longueur = self.slider.value()
+        symbole = self.checkbox_symbole.isChecked()
+        majuscule = self.checkbox_majuscule.isChecked()
+        minuscule = self.checkbox_minuscule.isChecked()
+        chiffre = self.checkbox_chiffre.isChecked()
+        password_generateur = PasswordGenerator(longueur,minuscule,majuscule,chiffre,symbole,False)
+        mot_de_passe_generer = password_generateur.generateur_mot_de_passe()
+        self.mot_de_passe = mot_de_passe_generer
+        self.rafraichir_la_page()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
