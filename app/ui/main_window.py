@@ -16,6 +16,7 @@ class MainWindow(QWidget):
         self.init_ui()
 
 
+
     def init_ui(self):
         layout_principal = QVBoxLayout()
 
@@ -32,18 +33,30 @@ class MainWindow(QWidget):
         layout = QVBoxLayout(conteneur)
         # 2) pour chaque entrée de self.entrees :
         for entree in self.entrees:
-            email_cachee = QLabel()
-            mot_de_passe_cachee = QLabel()
-            email_cachee.setText(entree.email)
-            mot_de_passe_cachee.setText("*" * len(entree.mot_de_passe))
-        #       créer un QLabel avec l'e-mail et des astérisques
-        #       (même idée que "*" * len(...) dans ton générateur)
-            layout.addWidget(email_cachee)
-            layout.addWidget(mot_de_passe_cachee)
-        #       l'ajouter au layout du conteneur
-        # 3) donner le conteneur à la zone : self.zone.setWidget(conteneur)
+            infos_utilisateur = Ligne_entree(entree)
+            layout.addWidget(infos_utilisateur)
+
         layout.addStretch(1)
         self.zone.setWidget(conteneur)
+
+class Ligne_entree(QLabel):
+    def __init__(self, entree):
+        super().__init__()
+        self.entree = entree
+        self.revele = False
+        self.rafraichir()
+
+    def mouseDoubleClickEvent(self, event):
+        self.revele = not self.revele
+        self.rafraichir()
+
+    def rafraichir(self):
+        if self.revele:
+            self.setText(f"{self.entree.email} : {self.entree.mot_de_passe}")
+        else:
+            self.setText(f"{self.entree.email} :  {'*' * len(self.entree.mot_de_passe)}")
+
+
 
 
 
