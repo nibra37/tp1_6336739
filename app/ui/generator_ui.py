@@ -1,8 +1,10 @@
 #Brandon-Lee Ouellet Daraiche 6336739 nibra37
 import sys
+
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QApplication, QWidget, QHBoxLayout,
-    QSlider, QSpinBox, QCheckBox, QVBoxLayout, QPushButton, QLabel
+    QSlider, QSpinBox, QCheckBox, QVBoxLayout, QPushButton, QLabel, QMessageBox
 )
 from PySide6.QtCore import Qt
 from app.core.generator import PasswordGenerator
@@ -12,8 +14,8 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("generateur mot de passe")
-        self.resize(800, 200)
-        self.mot_de_passe = "ABC123"
+        self.resize(500, 300)
+        self.mot_de_passe = ""
         self.mdp_visible = False
         self.init_ui()
 
@@ -24,6 +26,8 @@ class MainWindow(QWidget):
         rangee2 = QHBoxLayout()
         self.label_mdp = QLabel("*************")
         self.label_mdp.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.label_mdp.setFont(QFont("Courier New", 18))
+
 
         self.bouton_copier = QPushButton("Copier")
         self.bouton_copier.clicked.connect(self.copier)
@@ -55,22 +59,20 @@ class MainWindow(QWidget):
 
         self.checkbox_symbole = QCheckBox("Symbole")
         self.checkbox_symbole.setChecked(True)
-        self.checkbox_symbole.stateChanged.connect(lambda: print("État:", self.checkbox_symbole.isChecked()))
+
         layoutV.addWidget(self.checkbox_symbole)
 
         self.checkbox_majuscule = QCheckBox("Majuscule")
         self.checkbox_majuscule.setChecked(True)
-        self.checkbox_majuscule.stateChanged.connect(lambda: print("État:", self.checkbox_majuscule.isChecked()))
+
         layoutV.addWidget(self.checkbox_majuscule)
 
         self.checkbox_minuscule = QCheckBox("Minuscule")
         self.checkbox_minuscule.setChecked(True)
-        self.checkbox_minuscule.stateChanged.connect(lambda: print("État:", self.checkbox_minuscule.isChecked()))
         layoutV.addWidget(self.checkbox_minuscule)
 
         self.checkbox_chiffre = QCheckBox("Chiffre")
         self.checkbox_chiffre.setChecked(True)
-        self.checkbox_chiffre.stateChanged.connect(lambda: print("État:", self.checkbox_chiffre.isChecked()))
         layoutV.addWidget(self.checkbox_chiffre)
 
         self.button_generer_mot_de_passe = QPushButton("generer un mot de passe")
@@ -100,15 +102,23 @@ class MainWindow(QWidget):
         texte_copier.setText(self.mot_de_passe)
 
     def generer(self):
+
+
         longueur = self.slider.value()
         symbole = self.checkbox_symbole.isChecked()
         majuscule = self.checkbox_majuscule.isChecked()
         minuscule = self.checkbox_minuscule.isChecked()
         chiffre = self.checkbox_chiffre.isChecked()
-        password_generateur = PasswordGenerator(longueur,minuscule,majuscule,chiffre,symbole,False)
-        mot_de_passe_generer = password_generateur.generateur_mot_de_passe()
-        self.mot_de_passe = mot_de_passe_generer
-        self.rafraichir_la_page()
+        try:
+            password_generateur = PasswordGenerator(longueur,minuscule,majuscule,chiffre,symbole,False)
+            mot_de_passe_generer = password_generateur.generateur_mot_de_passe()
+            self.mot_de_passe = mot_de_passe_generer
+            self.rafraichir_la_page()
+        except ValueError as erreur:
+            QMessageBox.warning(self, "La liste ne peut pas etre vide", "La liste ne peut pas etre vide")
+
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

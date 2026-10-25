@@ -1,0 +1,10 @@
+[
+    {
+        "email": "a@b.com",
+        "mot_de_passe": "abc"
+    },
+    {
+        "email": "b@a.com",
+        "mot_de_passe": "xyz"
+    }
+]

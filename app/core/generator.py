@@ -33,9 +33,15 @@ class PasswordGenerator:
             liste_tous_caracteres += list(string.punctuation)
             mot_de_passe.append(random.choice(string.punctuation))
 
-        taille_restante = self.longueurPassword - len(mot_de_passe)
-        mot_de_passe += random.choices(liste_tous_caracteres, k=max(0, taille_restante))
 
+        taille_restante = self.longueurPassword - len(mot_de_passe)
+        if len(liste_tous_caracteres) != 0 :
+            mot_de_passe += random.choices(liste_tous_caracteres, k=max(0, taille_restante))
+        else:
+            raise ValueError("la liste ne peut pas être vide.")
+
+
+#while ... pour la validation
         random.shuffle(mot_de_passe)
         resultat = "".join(mot_de_passe[:self.longueurPassword])
 
@@ -52,6 +58,6 @@ class PasswordGenerator:
         v_symbole = any(c in symboles for c in mot_de_passe)
 
         if v_minuscule and v_majuscule and v_chiffre and v_symbole:
-            print("Vous avez un caractère de chaque catégorie")
+            return True
         else:
-            print("Vous n'avez pas un caractère de chaque catégorie")
+            return False
