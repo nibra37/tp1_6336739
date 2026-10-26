@@ -4,13 +4,13 @@ import sys
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QApplication, QWidget, QHBoxLayout,
-    QSlider, QSpinBox, QCheckBox, QVBoxLayout, QPushButton, QLabel, QMessageBox
+    QSlider, QSpinBox, QCheckBox, QVBoxLayout, QPushButton, QLabel, QMessageBox, QDialog, QDialogButtonBox
 )
 from PySide6.QtCore import Qt
 from app.core.generator import PasswordGenerator
 
 
-class MainWindow(QWidget):
+class Generator_Dialog(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("generateur mot de passe")
@@ -78,9 +78,18 @@ class MainWindow(QWidget):
         self.button_generer_mot_de_passe = QPushButton("generer un mot de passe")
         layoutV.addWidget(self.button_generer_mot_de_passe)
         self.button_generer_mot_de_passe.clicked.connect(self.generer)
+
+        boutons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        boutons.accepted.connect(self.accept)
+        boutons.rejected.connect(self.reject)
+
+        layoutV.addWidget(boutons)
+
         self.setLayout(layoutV)
 
-        self.rafraichir_la_page()
+        self.generer()
 
     def afficher_mot_de_passe(self, mdp_visible : bool):
         self.mdp_visible = mdp_visible
@@ -120,9 +129,9 @@ class MainWindow(QWidget):
 
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
+    def get_mot_de_passe(self):
+        return self.mot_de_passe
+
+
+
 

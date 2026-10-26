@@ -5,14 +5,14 @@ from PySide6.QtWidgets import (
     QMessageBox
 )
 from app.core.storage import Storage,Entree
-
+from app.ui.generator_ui import Generator_Dialog
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Coffre-fort")
         self.resize(500, 400)
-        self.storage = Storage("test2.json")
+        self.storage = Storage("vault.json")
         self.entrees = self.storage.charger_donnees()
 
         self.init_ui()
@@ -52,10 +52,14 @@ class MainWindow(QWidget):
         boite = Dialog_entree()
         if boite.exec() == QDialog.DialogCode.Accepted:
             email = boite.get_email()
+            mot_de_passe = boite.get_mot_de_passe()
 
             if email == "":
                 pas_email = QMessageBox.warning(boite,"message erreur", "L'email ne peut pas être vide")
                 return pas_email
+            if mot_de_passe == "":
+                pas_mot_de_passe = QMessageBox.warning(boite, "message erreur", "Le mot de passe ne peut pas être vide")
+                return pas_mot_de_passe
             entree = Entree(email, boite.get_mot_de_passe())
             self.entrees.append(entree)
             self.storage.sauvegarder_donnees(self.entrees)
@@ -96,6 +100,7 @@ class Dialog_entree(QDialog):
 
         self.mot_de_passe_interface = QLabel("mot de passe")
         self.bouton_generer = QPushButton("generer")
+        self.bouton_generer.clicked.connect(self.ouvrir_generateur)
         boutons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
@@ -119,6 +124,13 @@ class Dialog_entree(QDialog):
         mot_de_passe = self.mot_de_passe.text()
 
         return mot_de_passe
+
+    def ouvrir_generateur(self):
+        boite = Generator_Dialog()
+        if boite.exec() == QDialog.DialogCode.Accepted:
+            mot_de_passe = boite.get_mot_de_passe()
+            self.mot_de_passe.setText(mot_de_passe)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
