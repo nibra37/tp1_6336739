@@ -44,6 +44,7 @@ class MainWindow(QWidget):
             infos_utilisateur = Ligne_entree(entree)
             layout.addWidget(infos_utilisateur)
             infos_utilisateur.supprimer_demande.connect(self.supprimer_entree)
+            infos_utilisateur.modifier_demande.connect(self.modifier_entree)
 
 
         layout.addStretch(1)
@@ -76,9 +77,30 @@ class MainWindow(QWidget):
             self.afficher_entrees()
         return bouton_supprimer
 
+    def modifier_entree(self, entree):
+        boite = Dialog_entree(entree)
+        if boite.exec() == QDialog.DialogCode.Accepted:
+
+            email = boite.get_email()
+            mot_de_passe = boite.get_mot_de_passe()
+
+            entree.email = email
+            entree.mot_de_passe = mot_de_passe
+
+            if email == "":
+                pas_email = QMessageBox.warning(boite, "message erreur", "L'email ne peut pas être vide")
+                return pas_email
+            if mot_de_passe == "":
+                pas_mot_de_passe = QMessageBox.warning(boite, "message erreur", "Le mot de passe ne peut pas être vide")
+                return pas_mot_de_passe
+
+            self.storage.sauvegarder_donnees(self.entrees)
+            self.afficher_entrees()
+
+
 class Ligne_entree(QLabel):
     supprimer_demande = Signal(object)
-
+    modifier_demande = Signal(object)
 
     def __init__(self, entree):
         super().__init__()
@@ -106,8 +128,8 @@ class Ligne_entree(QLabel):
         if choix == afficher:
             self.revele = not self.revele
             self.rafraichir()
-        # if choix == modifier:
-
+        if choix == modifier:
+            self.modifier_demande.emit(self.entree)
 
         if choix == supprimer:
             self.supprimer_demande.emit(self.entree)
@@ -117,12 +139,15 @@ class Ligne_entree(QLabel):
 
 
 class Dialog_entree(QDialog):
-    def __init__(self):
+    def __init__(self, entree = None):
         super().__init__()
         self.email = QLineEdit()
         self.mot_de_passe =QLineEdit()
         self.setWindowTitle("Ajouter une entrée")
-
+        if entree is not None:
+            self.email.setText(entree.email)
+            self.mot_de_passe.setText(entree.mot_de_passe)
+            self.setWindowTitle("modifier une entrée")
 
         layout = QVBoxLayout()
 
