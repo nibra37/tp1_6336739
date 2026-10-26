@@ -2,10 +2,11 @@
 import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QScrollArea, QLabel, QDialog, QLineEdit, QDialogButtonBox, QPushButton,
-    QMessageBox
+    QMessageBox, QMenu
 )
 from app.core.storage import Storage,Entree
 from app.ui.generator_ui import Generator_Dialog
+from PySide6.QtCore import Signal
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -42,6 +43,8 @@ class MainWindow(QWidget):
         for entree in self.entrees:
             infos_utilisateur = Ligne_entree(entree)
             layout.addWidget(infos_utilisateur)
+            infos_utilisateur.supprimer_demande.connect(self.supprimer_entree)
+
 
         layout.addStretch(1)
         self.zone.setWidget(conteneur)
@@ -65,9 +68,18 @@ class MainWindow(QWidget):
             self.storage.sauvegarder_donnees(self.entrees)
             self.afficher_entrees()
 
-
+    def supprimer_entree(self, entree):
+        bouton_supprimer = QMessageBox.question(self, "Confirmation", "Supprimer cette entrée ?")
+        if bouton_supprimer == QMessageBox.StandardButton.Yes:
+            self.entrees.remove(entree)
+            self.storage.sauvegarder_donnees(self.entrees)
+            self.afficher_entrees()
+        return bouton_supprimer
 
 class Ligne_entree(QLabel):
+    supprimer_demande = Signal(object)
+
+
     def __init__(self, entree):
         super().__init__()
         self.entree = entree
@@ -83,6 +95,24 @@ class Ligne_entree(QLabel):
             self.setText(f"{self.entree.email} : {self.entree.mot_de_passe}")
         else:
             self.setText(f"{self.entree.email} :  {'*' * len(self.entree.mot_de_passe)}")
+
+
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        afficher = menu.addAction("afficher")
+        modifier = menu.addAction("modifier")
+        supprimer = menu.addAction("supprimer")
+        choix = menu.exec(event.globalPos())
+        if choix == afficher:
+            self.revele = not self.revele
+            self.rafraichir()
+        # if choix == modifier:
+
+
+        if choix == supprimer:
+            self.supprimer_demande.emit(self.entree)
+
+
 
 
 
