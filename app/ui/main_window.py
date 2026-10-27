@@ -1,4 +1,5 @@
 #Brandon-Lee Ouellet Daraiche | 6336739 | nibra37
+import json
 import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QScrollArea, QLabel, QDialog, QLineEdit, QDialogButtonBox, QPushButton,
@@ -32,6 +33,10 @@ class MainWindow(QWidget):
         self.bouton_ajouter = QPushButton("Ajouter")
         self.bouton_ajouter.clicked.connect(self.ajouter_entree)
         layout_principal.addWidget(self.bouton_ajouter)
+
+        self.bouton_trier = QPushButton("Trier")
+        self.bouton_trier.clicked.connect(self.trier_donnees_par_nom)
+        layout_principal.addWidget(self.bouton_trier)
 
         self.setLayout(layout_principal)
         self.afficher_entrees()
@@ -97,6 +102,10 @@ class MainWindow(QWidget):
             self.storage.sauvegarder_donnees(self.entrees)
             self.afficher_entrees()
 
+    def trier_donnees_par_nom(self):
+        donnees_trier = sorted(self.entrees, key=lambda e: e.email.lower())
+        self.entrees = donnees_trier
+        self.afficher_entrees()
 
 class Ligne_entree(QLabel):
     supprimer_demande = Signal(object)

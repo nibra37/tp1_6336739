@@ -61,6 +61,22 @@ class Storage:
         donnees = []
         for donnee in entrees:
             donnees.append(donnee.to_dict())
-        with open(self.chemin, "w", encoding="utf-8") as f:
-            json.dump(donnees, f, indent=4)
+
+        try:
+            with open(self.chemin, "w", encoding="utf-8") as f:
+                json.dump(donnees, f, indent=4)
+        except FileNotFoundError:
+            return []
+
+        except PermissionError:
+            raise ValueError("vous n'avez pas les permissions")
+
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Failed to decode JSON: {e}")
+
+        except UnicodeDecodeError as e:
+            raise ValueError("mauvais decodeur")
+
+        except Exception as e:
+            raise ValueError(f"Une erreur est survenue : {e}")
 
