@@ -75,6 +75,10 @@ class Generator_Dialog(QDialog):
         self.checkbox_chiffre.setChecked(True)
         layoutV.addWidget(self.checkbox_chiffre)
 
+        self.checkbox_validation = QCheckBox("Validation")
+        self.checkbox_validation.setChecked(True)
+        layoutV.addWidget(self.checkbox_validation)
+
         self.button_generer_mot_de_passe = QPushButton("generer un mot de passe")
         layoutV.addWidget(self.button_generer_mot_de_passe)
         self.button_generer_mot_de_passe.clicked.connect(self.generer)
@@ -118,13 +122,14 @@ class Generator_Dialog(QDialog):
         majuscule = self.checkbox_majuscule.isChecked()
         minuscule = self.checkbox_minuscule.isChecked()
         chiffre = self.checkbox_chiffre.isChecked()
+        validation = self.checkbox_validation.isChecked()
         try:
-            password_generateur = PasswordGenerator(longueur,minuscule,majuscule,chiffre,symbole,False)
+            password_generateur = PasswordGenerator(longueur,minuscule,majuscule,chiffre,symbole,validation)
             mot_de_passe_generer = password_generateur.generateur_mot_de_passe()
             self.mot_de_passe = mot_de_passe_generer
             self.rafraichir_la_page()
         except ValueError as erreur:
-            QMessageBox.warning(self, "La liste ne peut pas etre vide", "La liste ne peut pas etre vide")
+            QMessageBox.warning(self, "Erreur de la generation", str(erreur))
 
 
 
