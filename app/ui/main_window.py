@@ -10,7 +10,9 @@ from app.ui.generator_ui import Generator_Dialog
 from PySide6.QtCore import Signal
 
 class MainWindow(QWidget):
+    """Cette classe représente la fenêtre principale du gestionnaire"""
     def __init__(self, chemin="vault.json"):
+        """initialise la fenêtre, crée l'objet de stockage et charge les entrées enregistrées"""
         super().__init__()
         self.setWindowTitle("Coffre-fort")
         self.resize(500, 400)
@@ -27,6 +29,7 @@ class MainWindow(QWidget):
 
 
     def init_ui(self):
+        """construit l'interface principale avec la zone de défilement et les boutons d'ajout et de tri"""
         layout_principal = QVBoxLayout()
 
         self.zone = QScrollArea()
@@ -47,6 +50,7 @@ class MainWindow(QWidget):
         self.afficher_entrees()
 
     def afficher_entrees(self):
+        """affiche toutes les entrées enregistrées dans la fenêtre."""
         conteneur = QWidget()
         layout = QVBoxLayout(conteneur)
 
@@ -63,6 +67,7 @@ class MainWindow(QWidget):
 
 
     def ajouter_entree(self):
+        """ouvre une fenêtre pour ajouter une entrée, vérifie que les champs ne sont pas vides et sauvegarde les données."""
         boite = Dialog_entree()
         if boite.exec() == QDialog.DialogCode.Accepted:
             email = boite.get_email()
@@ -80,6 +85,7 @@ class MainWindow(QWidget):
             self.afficher_entrees()
 
     def supprimer_entree(self, entree):
+        """demande une confirmation avant de supprimer une entrée et sauvegarde les changements."""
         bouton_supprimer = QMessageBox.question(self, "Confirmation", "Supprimer cette entrée ?")
         if bouton_supprimer == QMessageBox.StandardButton.Yes:
             self.entrees.remove(entree)
@@ -88,6 +94,7 @@ class MainWindow(QWidget):
         return bouton_supprimer
 
     def modifier_entree(self, entree):
+        """ouvre une fenêtre de modification, récupère les nouvelles informations et sauvegarde les changements."""
         boite = Dialog_entree(entree)
         if boite.exec() == QDialog.DialogCode.Accepted:
 
@@ -108,29 +115,35 @@ class MainWindow(QWidget):
             self.afficher_entrees()
 
     def trier_donnees_par_nom(self):
+        """trie les données en ordre alphabetic de email"""
         donnees_trier = sorted(self.entrees, key=lambda e: e.email.lower())
         self.entrees = donnees_trier
         self.afficher_entrees()
 
     def closeEvent(self, event):
+        """sauvegarde les données lorsque l'utilisateur ferme la fenêtre."""
         self.storage.sauvegarder_donnees(self.entrees)
         event.accept()
 
 class Ligne_entree(QLabel):
+    """Cette classe représente une entrée affichée dans la fenêtre principale"""
     supprimer_demande = Signal(object)
     modifier_demande = Signal(object)
 
     def __init__(self, entree):
+        """initialise l'entrée et définit son état initial comme masqué"""
         super().__init__()
         self.entree = entree
         self.revele = False
         self.rafraichir()
 
     def mouseDoubleClickEvent(self, event):
+        """affiche ou masque le mot de passe lorsqu'on double-clique sur l'entrée"""
         self.revele = not self.revele
         self.rafraichir()
 
     def rafraichir(self):
+        """actualise le texte affiché selon que le mot de passe est visible ou masqué"""
         if self.revele:
             self.setText(f"{self.entree.email} : {self.entree.mot_de_passe}")
         else:
@@ -138,6 +151,7 @@ class Ligne_entree(QLabel):
 
 
     def contextMenuEvent(self, event):
+        """affiche un menu contextuel permettant d'afficher, de modifier ou de supprimer l'entrée"""
         menu = QMenu(self)
         afficher = menu.addAction("afficher")
         modifier = menu.addAction("modifier")
@@ -157,7 +171,9 @@ class Ligne_entree(QLabel):
 
 
 class Dialog_entree(QDialog):
+
     def __init__(self, entree = None):
+        """crée les champs pour l'adresse courriel et le mot de passe, ainsi que les boutons de validation, d'annulation et de génération"""
         super().__init__()
         self.email = QLineEdit()
         self.mot_de_passe =QLineEdit()
@@ -189,16 +205,19 @@ class Dialog_entree(QDialog):
         self.setLayout(layout)
 
     def get_email(self):
+        """retourne l'adresse courriel"""
         email = self.email.text()
 
         return email
 
     def get_mot_de_passe(self):
+        """retourne le mot de passe"""
         mot_de_passe = self.mot_de_passe.text()
 
         return mot_de_passe
 
     def ouvrir_generateur(self):
+        """ouvre la fenêtre du générateur et récupère le mot de passe généré si l'utilisateur confirme son choix"""
         boite = Generator_Dialog()
         if boite.exec() == QDialog.DialogCode.Accepted:
             mot_de_passe = boite.get_mot_de_passe()

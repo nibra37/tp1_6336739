@@ -2,7 +2,9 @@
 import json
 
 class Entree:
+    """Cette classe représente une entrée contenant une adresse courriel et un mot de passe"""
     def __init__(self,email,mot_de_passe):
+        """initialise les informations de l'entrée"""
         self.email = email
         self.mot_de_passe = mot_de_passe
 
@@ -21,13 +23,16 @@ class Entree:
             mot_de_passe=data['mot_de_passe'])
 
 class Storage:
+    """Cette classe s'occupe de la sauvegarde et du chargement des données"""
 
     def __init__(self, chemin):
+        """définit le chemin du fichier de sauvegarde."""
         self.chemin = chemin
 
 
 
     def charger_donnees(self):
+        """charge les entrées depuis un fichier JSON et vérifie leur format"""
         try:
             with open(self.chemin, "r", encoding="utf-8") as f:
                 loaded_data = json.load(f)
@@ -58,6 +63,7 @@ class Storage:
         return utilisateurs
 
     def sauvegarder_donnees(self,entrees):
+        """enregistre les entrées dans le fichier JSON"""
         donnees = []
         for donnee in entrees:
             donnees.append(donnee.to_dict())

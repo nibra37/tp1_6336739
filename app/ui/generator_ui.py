@@ -11,7 +11,9 @@ from app.core.generator import PasswordGenerator
 
 
 class Generator_Dialog(QDialog):
+    """Cette classe représente la fenêtre du générateur de mots de passe"""
     def __init__(self):
+        """initialise la fenêtre, définit ses dimensions et prépare les variables nécessaires."""
         super().__init__()
         self.setWindowTitle("generateur mot de passe")
         self.resize(500, 300)
@@ -20,7 +22,8 @@ class Generator_Dialog(QDialog):
         self.init_ui()
 
     def init_ui(self):
-
+        """crée les éléments de l'interface, comme les boutons, les cases à cocher et le curseur et connect les
+        boutons aux fonctions appropriés"""
         layoutV = QVBoxLayout()
         rangee1 = QHBoxLayout()
         rangee2 = QHBoxLayout()
@@ -96,11 +99,14 @@ class Generator_Dialog(QDialog):
         self.generer()
 
     def afficher_mot_de_passe(self, mdp_visible : bool):
+        """permet de montrer ou de le masquer le mot de passe"""
         self.mdp_visible = mdp_visible
         self.rafraichir_la_page()
 
 
     def rafraichir_la_page(self):
+        """actualise l'affichage du mot de passe selon son état de visibilité"""
+
         if self.mdp_visible:
             self.bouton_afficher.setText("masquer")
             self.label_mdp.setText(self.mot_de_passe)
@@ -111,11 +117,12 @@ class Generator_Dialog(QDialog):
             self.label_mdp.setText(mot_de_passe_cachee)
 
     def copier(self):
+        """copie le mot de passe dans le presse-papiers"""
         texte_copier = QApplication.clipboard()
         texte_copier.setText(self.mot_de_passe)
 
     def generer(self):
-
+        """récupère les paramètres sélectionnés, génère un mot de passe et affiche un message d'erreur si la génération échoue"""
 
         longueur = self.slider.value()
         symbole = self.checkbox_symbole.isChecked()
@@ -135,6 +142,7 @@ class Generator_Dialog(QDialog):
 
 
     def get_mot_de_passe(self):
+        """retourne le mot de passe"""
         return self.mot_de_passe
 
 

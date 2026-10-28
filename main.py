@@ -8,6 +8,10 @@ import sys
 from app.ui.main_window import MainWindow
 
 def main():
+    """Crée et configure les arguments de la ligne de commande
+    Génère un mot de passe directement dans la console si l'option
+    --no-gui est utilisée. Démarre l'application interface"""
+
     parser = argparse.ArgumentParser(description="gestionnaire mot de passe")
     parser.add_argument("--length", type=int, default = 16)
     parser.add_argument("--no-lower", action="store_true")

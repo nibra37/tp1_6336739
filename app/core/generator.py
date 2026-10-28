@@ -5,7 +5,9 @@ import string
 
 
 class PasswordGenerator:
+    """ Génère des mots de passe aléatoires selon les paramètres choisis par l'utilisateur"""
     def __init__(self, longueurPassword, minuscule, majuscule, chiffre, symbole, validation):
+        """initialise la longueur et les types de caractères autorisés"""
         self.longueurPassword = longueurPassword
         self.minuscule = minuscule
         self.majuscule = majuscule
@@ -14,6 +16,7 @@ class PasswordGenerator:
         self.validation = validation
 
     def generateur_mot_de_passe(self):
+        """génère le mot de passe selon les caractères sélectionnés"""
         liste_tous_caracteres = []
 
 
@@ -44,6 +47,7 @@ class PasswordGenerator:
         return mot_de_passe
 
     def validation_mot_de_passe(self, mot_de_passe):
+        """vérifie que le mot de passe contient au moins 1 caractère demandé lorsque la validation est active"""
         symboles = string.punctuation
         v_minuscule = any(c.islower() for c in mot_de_passe)
         v_majuscule = any(c.isupper() for c in mot_de_passe)
