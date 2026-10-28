@@ -10,12 +10,17 @@ from app.ui.generator_ui import Generator_Dialog
 from PySide6.QtCore import Signal
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, chemin="vault.json"):
         super().__init__()
         self.setWindowTitle("Coffre-fort")
         self.resize(500, 400)
-        self.storage = Storage("vault.json")
-        self.entrees = self.storage.charger_donnees()
+        self.storage = Storage(chemin)
+
+        try:
+            self.entrees = self.storage.charger_donnees()
+        except ValueError as erreur:
+            self.entrees = []
+            QMessageBox.warning(self, "message erreur", "erreur")
 
         self.init_ui()
 
@@ -106,6 +111,10 @@ class MainWindow(QWidget):
         donnees_trier = sorted(self.entrees, key=lambda e: e.email.lower())
         self.entrees = donnees_trier
         self.afficher_entrees()
+
+    def closeEvent(self, event):
+        self.storage.sauvegarder_donnees(self.entrees)
+        event.accept()
 
 class Ligne_entree(QLabel):
     supprimer_demande = Signal(object)
